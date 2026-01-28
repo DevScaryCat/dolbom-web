@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --foreground-rgb: 255, 255, 255;
@@ -8,14 +6,17 @@
   --background-end-rgb: 0, 0, 0;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: black;
-  overflow-x: hidden; /* 가로 스크롤 방지 */
+/* v4에서는 body 스타일을 이렇게 잡는 것이 안전합니다 */
+@layer base {
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: black;
+    overflow-x: hidden;
+  }
 }
 
 /* =========================================
-   1. 무한 스크롤 애니메이션 (핵심 수정)
+   1. 무한 스크롤 애니메이션
    ========================================= */
 @keyframes scroll {
   0% {
@@ -28,16 +29,10 @@ body {
 
 .animate-scroll {
   display: flex;
-  width: max-content; /* 내용물 길이만큼 늘어나게 강제 설정 */
+  width: max-content;
   animation: scroll 40s linear infinite;
-  /* 성능 최적화: 버벅임 방지 */
   will-change: transform;
 }
-
-/* 마우스를 올리면 멈추게 하고 싶다면 주석 해제하세요 */
-/* .animate-scroll:hover {
-  animation-play-state: paused;
-} */
 
 /* =========================================
    2. 그리드 & 마스크 유틸리티
@@ -49,7 +44,6 @@ body {
     linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
 }
 
-/* 좌우 그라데이션 마스크 (안개 효과) */
 .mask-gradient {
   mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
   -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
