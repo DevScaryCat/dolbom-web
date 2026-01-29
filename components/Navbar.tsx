@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { createBrowserClient } from "@supabase/ssr";
 import { useEffect, useState, useRef } from "react";
 import { User } from "@supabase/supabase-js";
+import Image from "next/image";
 
 // [핵심] 부모(Layout)로부터 user를 받을 준비
 interface NavbarProps {
@@ -69,14 +70,17 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
 
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 group">
+                    {/* 로고 이미지 컨테이너 */}
                     <div className="p-1.5 bg-emerald-500/10 rounded-lg border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
-                        <Dna size={20} className="text-emerald-500" />
+                        <Image
+                            src="/logo-no-bg.png"
+                            alt="Dolbom AI Logo"
+                            width={25}
+                            height={25}
+                            className="size-7 object-contain"
+                        />
                     </div>
-                    <span className="font-bold text-lg tracking-tight text-white">
-                        Dolbom<span className="text-zinc-500"> AI</span>
-                    </span>
                 </Link>
-
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-1">
                     {navItems.map((item) => {
@@ -114,8 +118,8 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
                             <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                                 className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-white border rounded-full transition-all ${isMenuOpen
-                                        ? "bg-zinc-800 border-emerald-500/50 ring-1 ring-emerald-500/20"
-                                        : "bg-zinc-900 border-white/10 hover:bg-zinc-800"
+                                    ? "bg-zinc-800 border-emerald-500/50 ring-1 ring-emerald-500/20"
+                                    : "bg-zinc-900 border-white/10 hover:bg-zinc-800"
                                     }`}
                             >
                                 <UserCircle size={16} className="text-emerald-400" />

@@ -11,6 +11,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Dolbom AI Pipeline",
   description: "Genomic Risk Assessment Platform",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default async function RootLayout({
