@@ -18,10 +18,19 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value, options));
+          cookiesToSet.forEach(({ name, value, options }) =>
+            // [수정된 부분] 인자를 3개가 아니라 객체 1개로 묶어서 전달해야 함
+            request.cookies.set({
+              name,
+              value,
+              ...options,
+            }),
+          );
+
           response = NextResponse.next({
             request,
           });
+
           cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
         },
       },
@@ -41,7 +50,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // [핵심] 온보딩 여부 확인
+    // 온보딩 여부 확인
     const { data: profile } = await supabase.from("profiles").select("is_onboarded").eq("id", user.id).single();
 
     // 정보 입력 안 했는데 딴짓 하려고 하면 -> 온보딩 페이지로 납치
@@ -62,7 +71,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
   } else {
-    // 2. 비로그인 상태일 때 (보호된 페이지 접근 시 로그인으로)
+    // 2. 비로그인 상태일 때
     if (url.pathname.startsWith("/dashboard") || url.pathname.startsWith("/onboarding")) {
       url.pathname = "/login";
       return NextResponse.redirect(url);
