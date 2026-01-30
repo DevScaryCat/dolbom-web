@@ -18,7 +18,6 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
     const pathname = usePathname();
     const router = useRouter();
 
-    // [핵심] 로그인 또는 회원가입 페이지인지 확인
     const isAuthPage = ["/login", "/signup"].includes(pathname);
 
     const [user, setUser] = useState<User | null>(initialUser);
@@ -67,14 +66,11 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
         { name: "Documentation", path: "/docs" },
     ];
 
-    // [핵심] 인증 페이지라면 '심플 모드' Navbar 반환
+    // [인증 페이지용 Navbar]
     if (isAuthPage) {
         return (
-            // [수정됨] 기존 p-6 제거하고 메인 페이지와 구조 통일
             <nav className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-                {/* [수정됨] 메인 페이지와 동일한 max-w-7xl 컨테이너 적용하여 그리드 라인 일치시킴 */}
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                    {/* 왼쪽 상단 로고 (클릭 가능하게 pointer-events-auto) */}
                     <Link href="/" className="flex items-center gap-2 group pointer-events-auto">
                         <div className="p-1.5 bg-emerald-500/10 rounded-lg border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
                             <Image
@@ -91,25 +87,28 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
         );
     }
 
-    // --- 아래는 기존 일반 Navbar 코드 유지 ---
+    // [메인 Navbar]
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/50 backdrop-blur-md">
-            <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                {/* Logo */}
-                <Link href="/" className="flex items-center gap-2 group z-50">
-                    <div className="p-1.5 bg-emerald-500/10 rounded-lg border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
-                        <Image
-                            src="/logo-no-bg.png"
-                            alt="Dolbom AI Logo"
-                            width={25}
-                            height={25}
-                            className="size-7 object-contain"
-                        />
-                    </div>
-                </Link>
+            <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
-                {/* Desktop Navigation */}
-                <div className="hidden md:flex items-center gap-1">
+                {/* 1. Logo (왼쪽) */}
+                <div className="flex items-center z-50">
+                    <Link href="/" className="flex items-center gap-2 group">
+                        <div className="p-1.5 bg-emerald-500/10 rounded-lg border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
+                            <Image
+                                src="/logo-no-bg.png"
+                                alt="Dolbom AI Logo"
+                                width={25}
+                                height={25}
+                                className="size-7 object-contain"
+                            />
+                        </div>
+                    </Link>
+                </div>
+
+                {/* 2. Desktop Navigation (완전 중앙 정렬) */}
+                <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-1 z-40">
                     {navItems.map((item) => {
                         const isActive = pathname === item.path;
                         return (
@@ -133,8 +132,8 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
                     })}
                 </div>
 
-                {/* Right Area */}
-                <div className="flex items-center gap-3">
+                {/* 3. Right Area (오른쪽) */}
+                <div className="flex items-center gap-3 z-50">
                     <Link href="https://github.com/DevScaryCat" target="_blank" className="hidden sm:block text-zinc-400 hover:text-white transition">
                         <Github size={20} />
                     </Link>
