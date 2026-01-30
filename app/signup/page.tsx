@@ -8,6 +8,7 @@ import { Dna, Lock, Mail, ArrowRight, Github, Loader2, CheckCircle2 } from "luci
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// [설정] 8자리 코드
 const OTP_LENGTH = 8;
 
 export default function SignupPage() {
@@ -18,7 +19,6 @@ export default function SignupPage() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
-    // [변경] 설정된 길이(OTP_LENGTH)만큼 배열 생성
     const [otp, setOtp] = useState<string[]>(new Array(OTP_LENGTH).fill(""));
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -156,11 +156,22 @@ export default function SignupPage() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
 
             <motion.div
+                layout // [핵심] 크기 변경 시 부드럽게 애니메이션
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="w-full max-w-md bg-zinc-900/50 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl relative z-10"
+                animate={{
+                    opacity: 1,
+                    y: 0,
+                    // [핵심] 인증 단계일 때 너비를 넓힘 (max-w-md -> max-w-lg)
+                    width: step === 'verify' ? '100%' : '100%',
+                    maxWidth: step === 'verify' ? '32rem' : '28rem'
+                }}
+                className="bg-zinc-900/50 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl relative z-10 mx-auto"
             >
-
+                <div className="flex justify-center mb-6">
+                    <Link href="/" className="p-3 bg-blue-500/10 rounded-xl border border-blue-500/20">
+                        <Dna size={32} className="text-blue-500" />
+                    </Link>
+                </div>
 
                 <div className="text-center mb-8">
                     <h1 className="text-2xl font-bold text-white mb-2">
@@ -285,7 +296,8 @@ export default function SignupPage() {
                                     <p className="text-center">이메일로 전송된 {OTP_LENGTH}자리 코드를 입력해주세요.</p>
                                 </div>
 
-                                <div className="flex justify-center gap-2 sm:gap-3">
+                                {/* [핵심] 간격(gap-1)과 박스 너비를 모바일/데스크탑에 맞춰 촘촘하게 조정 */}
+                                <div className="flex justify-center gap-1 sm:gap-2">
                                     {otp.map((data, index) => {
                                         return (
                                             <input
@@ -299,7 +311,8 @@ export default function SignupPage() {
                                                 onChange={(e) => handleChange(e.target, index)}
                                                 onKeyDown={(e) => handleKeyDown(e, index)}
                                                 onPaste={handlePaste}
-                                                className="w-10 h-12 sm:w-12 sm:h-14 border border-zinc-700 bg-zinc-900/50 rounded-xl text-center text-xl sm:text-2xl font-bold text-white 
+                                                // [핵심] 모바일에서는 w-8, 데스크탑에서는 w-10으로 크기 최적화
+                                                className="w-8 h-10 sm:w-10 sm:h-14 border border-zinc-700 bg-zinc-900/50 rounded-lg sm:rounded-xl text-center text-lg sm:text-2xl font-bold text-white 
                                                          focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:shadow-[0_0_20px_rgba(59,130,246,0.5)] 
                                                          outline-none transition-all duration-200 selection:bg-transparent"
                                             />
