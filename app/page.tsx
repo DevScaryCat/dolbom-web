@@ -111,7 +111,7 @@ export default function Home() {
       </section>
 
       {/* =========================================
-          [NEW] 2.5 Global Network Globe Section
+          2.5 Global Network Globe Section
       ========================================= */}
       <section className="py-32 relative overflow-hidden border-b border-white/5">
         {/* 배경 효과 */}
@@ -130,7 +130,7 @@ export default function Home() {
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                 className="w-full h-full rounded-full border border-blue-500/20 relative flex items-center justify-center shadow-[0_0_50px_rgba(59,130,246,0.1)]"
               >
-                {/* Meridians (경도선 - 타원형으로 표현) */}
+                {/* Meridians (경도선) */}
                 <div className="absolute w-[100%] h-[100%] rounded-full border border-blue-400/10" />
                 <div className="absolute w-[70%] h-[100%] rounded-[50%] border border-blue-400/20" />
                 <div className="absolute w-[40%] h-[100%] rounded-[50%] border border-blue-400/20" />
@@ -169,14 +169,21 @@ export default function Home() {
               가장 방대한 생체 데이터 댐을 구축하고 있습니다.
             </p>
 
+            {/* [수정됨] 작은 통계 박스들에 그리드 추가 */}
             <div className="grid grid-cols-2 gap-6">
-              <div className="p-4 rounded-xl bg-zinc-900/50 border border-white/5">
-                <div className="text-3xl font-bold text-white mb-1">24/7</div>
-                <div className="text-xs text-zinc-500 uppercase">Real-time Analysis</div>
+              <div className="relative overflow-hidden p-4 rounded-xl bg-zinc-900/50 border border-white/5">
+                <div className="absolute inset-0 bg-grid-pattern opacity-[0.7] pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="text-3xl font-bold text-white mb-1">24/7</div>
+                  <div className="text-xs text-zinc-500 uppercase">Real-time Analysis</div>
+                </div>
               </div>
-              <div className="p-4 rounded-xl bg-zinc-900/50 border border-white/5">
-                <div className="text-3xl font-bold text-white mb-1">Global</div>
-                <div className="text-xs text-zinc-500 uppercase">Standard Data</div>
+              <div className="relative overflow-hidden p-4 rounded-xl bg-zinc-900/50 border border-white/5">
+                <div className="absolute inset-0 bg-grid-pattern opacity-[0.7] pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="text-3xl font-bold text-white mb-1">Global</div>
+                  <div className="text-xs text-zinc-500 uppercase">Standard Data</div>
+                </div>
               </div>
             </div>
           </div>
@@ -288,19 +295,28 @@ function FeatureCard({ icon, title, desc, tags, delay }: any) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay, duration: 0.5 }}
-      className="p-8 rounded-2xl bg-zinc-900/40 border border-white/5 hover:border-emerald-500/30 hover:bg-zinc-900/80 transition-all duration-300 group hover:shadow-[0_0_30px_rgba(16,185,129,0.1)]"
+      // [수정] relative overflow-hidden 추가
+      className="relative overflow-hidden p-8 rounded-2xl bg-zinc-900/40 border border-white/5 hover:border-emerald-500/30 hover:bg-zinc-900/80 transition-all duration-300 group hover:shadow-[0_0_30px_rgba(16,185,129,0.1)]"
     >
-      <div className="mb-6 p-3 bg-zinc-950 rounded-lg inline-block border border-white/10 group-hover:border-emerald-500/30 transition-colors">
-        {icon}
-      </div>
-      <h3 className="text-xl font-bold mb-3 text-zinc-100 group-hover:text-emerald-400 transition-colors">{title}</h3>
-      <p className="text-zinc-400 mb-6 leading-relaxed text-sm h-16">{desc}</p>
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag: string) => (
-          <span key={tag} className="px-2 py-1 text-xs font-medium text-zinc-500 bg-zinc-950 border border-white/10 rounded group-hover:border-emerald-500/20 group-hover:text-emerald-500/70 transition-colors">
-            {tag}
-          </span>
-        ))}
+      {/* [수정] 미세 그리드 */}
+      <div
+        className="absolute inset-0 bg-grid-pattern opacity-[0.7] pointer-events-none"
+        style={{ maskImage: 'linear-gradient(to right, transparent, black 90%, black 25%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)' }}
+      />
+
+      <div className="relative z-10">
+        <div className="mb-6 p-3 bg-zinc-950 rounded-lg inline-block border border-white/10 group-hover:border-emerald-500/30 transition-colors">
+          {icon}
+        </div>
+        <h3 className="text-xl font-bold mb-3 text-zinc-100 group-hover:text-emerald-400 transition-colors">{title}</h3>
+        <p className="text-zinc-400 mb-6 leading-relaxed text-sm h-16">{desc}</p>
+        <div className="flex flex-wrap gap-2">
+          {tags.map((tag: string) => (
+            <span key={tag} className="px-2 py-1 text-xs font-medium text-zinc-500 bg-zinc-950 border border-white/10 rounded group-hover:border-emerald-500/20 group-hover:text-emerald-500/70 transition-colors">
+              {tag}
+            </span>
+          ))}
+        </div>
       </div>
     </motion.div>
   )

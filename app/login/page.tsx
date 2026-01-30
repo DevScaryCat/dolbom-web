@@ -70,20 +70,15 @@ export default function LoginPage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="w-full max-w-md bg-zinc-900/50 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl relative z-10"
             >
-                <div className="flex justify-center mb-8">
-                    <Link href="/" className="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-                        <Dna size={32} className="text-emerald-500" />
-                    </Link>
-                </div>
 
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold text-white mb-2">Welcome Back</h1>
-                    <p className="text-zinc-400 text-sm">Dolbom AI 파이프라인에 접속하세요.</p>
+                    <h1 className="text-2xl font-bold text-white mb-2">반갑습니다 :/</h1>
+                    <p className="text-zinc-400 text-sm">돌봄 AI 파이프라인에 접속하세요.</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-4">
                     <div>
-                        <label className="block text-xs font-medium text-zinc-400 mb-1.5 ml-1">Email Address</label>
+                        <label className="block text-xs font-medium text-zinc-400 mb-1.5 ml-1">이메일</label>
                         <div className="relative group">
                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-emerald-400 transition-colors" size={18} />
                             <input
@@ -98,7 +93,7 @@ export default function LoginPage() {
                     </div>
 
                     <div>
-                        <label className="block text-xs font-medium text-zinc-400 mb-1.5 ml-1">Password</label>
+                        <label className="block text-xs font-medium text-zinc-400 mb-1.5 ml-1">비밀번호</label>
                         <div className="relative group">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-emerald-400 transition-colors" size={18} />
                             <input
@@ -123,13 +118,13 @@ export default function LoginPage() {
                         disabled={loading}
                         className="w-full bg-emerald-500 hover:bg-emerald-400 text-black font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2 mt-2"
                     >
-                        {loading ? <Loader2 size={18} className="animate-spin" /> : <>Sign In <ArrowRight size={18} /></>}
+                        {loading ? <Loader2 size={18} className="animate-spin" /> : <>로그인 <ArrowRight size={18} /></>}
                     </button>
                 </form>
 
                 <div className="relative my-8">
                     <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
-                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-[#0A0A0A] px-2 text-zinc-500">Or continue with</span></div>
+                    <div className="relative flex justify-center text-xs uppercase"><span className="text-zinc-400">다른 방법으로 계속하기 </span></div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -149,7 +144,7 @@ export default function LoginPage() {
                 </div>
 
                 <p className="text-center mt-8 text-xs text-zinc-500">
-                    Don't have an account? <Link href="/signup" className="text-emerald-400 hover:underline">Contact Sales</Link>
+                    아직 계정이 없으신가요? <Link href="/signup" className="text-emerald-400 hover:underline">회원가입</Link>
                 </p>
 
             </motion.div>

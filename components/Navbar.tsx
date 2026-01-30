@@ -3,27 +3,28 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Dna, Github, UserCircle, LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
+import { Github, UserCircle, LogOut, LayoutDashboard, ChevronDown, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createBrowserClient } from "@supabase/ssr";
 import { useEffect, useState, useRef } from "react";
 import { User } from "@supabase/supabase-js";
 import Image from "next/image";
 
-// [핵심] 부모(Layout)로부터 user를 받을 준비
 interface NavbarProps {
     user: User | null;
 }
 
-// [핵심] props로 user를 받아서 초기값으로 설정
 export default function Navbar({ user: initialUser }: NavbarProps) {
     const pathname = usePathname();
     const router = useRouter();
 
-    // [핵심] useState의 초기값을 null이 아니라 서버에서 받은 initialUser로 설정!
-    const [user, setUser] = useState<User | null>(initialUser);
+    // [핵심] 로그인 또는 회원가입 페이지인지 확인
+    const isAuthPage = ["/login", "/signup"].includes(pathname);
 
+    const [user, setUser] = useState<User | null>(initialUser);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     const menuRef = useRef<HTMLDivElement>(null);
 
     const supabase = createBrowserClient(
@@ -32,8 +33,10 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
     );
 
     useEffect(() => {
-        // [참고] 서버에서 이미 가져왔지만, 
-        // 클라이언트 사이드에서의 변화(로그아웃 등)를 감지하기 위해 리스너는 유지합니다.
+        setIsMobileMenuOpen(false);
+    }, [pathname]);
+
+    useEffect(() => {
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
             if (!session?.user) setIsMenuOpen(false);
@@ -64,13 +67,36 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
         { name: "Documentation", path: "/docs" },
     ];
 
+    // [핵심] 인증 페이지라면 '심플 모드' Navbar 반환
+    if (isAuthPage) {
+        return (
+            // [수정됨] 기존 p-6 제거하고 메인 페이지와 구조 통일
+            <nav className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+                {/* [수정됨] 메인 페이지와 동일한 max-w-7xl 컨테이너 적용하여 그리드 라인 일치시킴 */}
+                <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+                    {/* 왼쪽 상단 로고 (클릭 가능하게 pointer-events-auto) */}
+                    <Link href="/" className="flex items-center gap-2 group pointer-events-auto">
+                        <div className="p-1.5 bg-emerald-500/10 rounded-lg border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
+                            <Image
+                                src="/logo-no-bg.png"
+                                alt="Dolbom AI Logo"
+                                width={25}
+                                height={25}
+                                className="size-7 object-contain"
+                            />
+                        </div>
+                    </Link>
+                </div>
+            </nav>
+        );
+    }
+
+    // --- 아래는 기존 일반 Navbar 코드 유지 ---
     return (
         <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/50 backdrop-blur-md">
             <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2 group">
-                    {/* 로고 이미지 컨테이너 */}
+                <Link href="/" className="flex items-center gap-2 group z-50">
                     <div className="p-1.5 bg-emerald-500/10 rounded-lg border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
                         <Image
                             src="/logo-no-bg.png"
@@ -81,6 +107,7 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
                         />
                     </div>
                 </Link>
+
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-1">
                     {navItems.map((item) => {
@@ -107,23 +134,22 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
                 </div>
 
                 {/* Right Area */}
-                <div className="flex items-center gap-4">
-                    <Link href="https://github.com/DevScaryCat" target="_blank" className="text-zinc-400 hover:text-white transition">
+                <div className="flex items-center gap-3">
+                    <Link href="https://github.com/DevScaryCat" target="_blank" className="hidden sm:block text-zinc-400 hover:text-white transition">
                         <Github size={20} />
                     </Link>
 
-                    {/* User Menu Area */}
                     {user ? (
                         <div className="relative" ref={menuRef}>
                             <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-white border rounded-full transition-all ${isMenuOpen
+                                className={`flex items-center gap-2 px-2 sm:px-3 py-1.5 text-xs font-semibold text-white border rounded-full transition-all ${isMenuOpen
                                     ? "bg-zinc-800 border-emerald-500/50 ring-1 ring-emerald-500/20"
                                     : "bg-zinc-900 border-white/10 hover:bg-zinc-800"
                                     }`}
                             >
                                 <UserCircle size={16} className="text-emerald-400" />
-                                <span className="max-w-[100px] truncate hidden sm:inline">
+                                <span className="max-w-[80px] sm:max-w-[100px] truncate hidden sm:inline">
                                     {user.email?.split('@')[0]}
                                 </span>
                                 <ChevronDown
@@ -145,7 +171,6 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
                                             <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Signed in as</p>
                                             <p className="text-sm text-white truncate font-medium">{user.email}</p>
                                         </div>
-
                                         <div className="p-1">
                                             <Link
                                                 href="/dashboard"
@@ -155,7 +180,6 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
                                                 <LayoutDashboard size={16} className="text-zinc-500 group-hover:text-emerald-400 transition-colors" />
                                                 Dashboard
                                             </Link>
-
                                             <button
                                                 onClick={handleLogout}
                                                 className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors group"
@@ -171,13 +195,53 @@ export default function Navbar({ user: initialUser }: NavbarProps) {
                     ) : (
                         <Link
                             href="/login"
-                            className="hidden sm:block px-4 py-1.5 text-xs font-semibold text-black bg-white rounded-full hover:bg-zinc-200 transition"
+                            className="px-4 py-1.5 text-xs font-semibold text-black bg-white rounded-full hover:bg-zinc-200 transition"
                         >
                             Login
                         </Link>
                     )}
+
+                    <button
+                        className="md:hidden p-2 text-zinc-400 hover:text-white transition-colors"
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                    >
+                        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
                 </div>
             </div>
+
+            <AnimatePresence>
+                {isMobileMenuOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="md:hidden border-t border-white/5 bg-black/95 overflow-hidden"
+                    >
+                        <div className="flex flex-col p-4 space-y-2">
+                            {navItems.map((item) => {
+                                const isActive = pathname === item.path;
+                                return (
+                                    <Link
+                                        key={item.path}
+                                        href={item.path}
+                                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive
+                                            ? "bg-white/10 text-white"
+                                            : "text-zinc-400 hover:text-white hover:bg-white/5"
+                                            }`}
+                                    >
+                                        {item.name}
+                                    </Link>
+                                )
+                            })}
+                            <Link href="https://github.com/DevScaryCat" target="_blank" className="px-4 py-3 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-white/5 flex items-center gap-2">
+                                <Github size={18} />
+                                GitHub Repository
+                            </Link>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </nav>
     );
 }
